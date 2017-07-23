@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+	<title>slide demo</title>
+	<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	ul,li{
+		list-style: none;
+	}
+	.main{
+		position: fixed;;
+		left: 0;
+		right: 0;
+		top: 0;
+	}
+	.main-list{
+		position: absolute;
+		/*left: 0;*/
+		top: 0;
+		transition: 0.5s;
+		overflow: hidden;
+		width: 300%;
+		transform: translate(0,0);
+	}
+	.main-item{
+		position: relative;
+		padding-left: 33.3%;
+		height: 80px;
+		float: left;
+	}
+	.main-item:nth-child(1){
+		background-color: #ddd;
+	}
+	.main-item:nth-child(2){
+		background-color: #ffdd00;
+	}
+	.main-item:nth-child(3){
+		background-color: #666;
+	}
+	.text{
+		position: absolute;
+		left: 0;
+		width: 200px;
+		height: 100%;	
+		background-color: #fff;
+	}
+	</style>
+</head>
+<body>
+	<div class="main">
+		<ul class="main-list" style="transform: translateX(0)">
+			<li class="main-item", index=0>
+				<div class="text">one</div>
+			</li>
+			<li class="main-item", index=1>
+				<div class="text">two</div>
+			</li>
+			<li class="main-item", index=2>
+				<div class="text">three</div>
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+	var select = document.getElementsByClassName('main-item');
+	var mainBox = document.getElementsByClassName('main-list');
+	var selectWidth = document.documentElement.clientWidth;
+	var target;
+	var time;
+	var currentLeft;
+	var startPageX;
+	var movePageX;
+	var direction;
+	var minSlide = 50;
+	var index;
+	var haspause = false;
+	for(var i=0; i<select.length; i++){
+		select[i].addEventListener('touchstart', function(e){
+			time = new Date();
+			var touch = e.targetTouches[0];
+			startPageX = touch.pageX;
+			currentLeft = parseInt(/(\d+)/.test(mainBox[0].style.transform) ? RegExp.$1 : 0);
+		});
+		select[i].addEventListener('touchmove', function(e){
+			var touch = e.targetTouches[0];
+			target = e.currentTarget;
+			index = parseInt(target.getAttribute('index'));
+			movePageX = touch.pageX;
+			if(movePageX - startPageX < 0){
+				// 从右到左
+				direction = "right2left";
+			}else{
+				direction = 'left2right';
+			}
+			if(index == 0 && direction == 'left2right' || index == 2 && direction=='right2left'){
+				haspause = true;
+				return false;
+			}
+			haspause = false;
+			var slideLeft = currentLeft + (movePageX - startPageX);
+			console.log(slideLeft);
+			mainBox[0].style.webkitTransform = "translatex("+ slideLeft + "px)";
+		});
+		select[i].addEventListener('touchend', function(e){
+			time = new Date();
+			if(time <= 120 || Math.abs(movePageX - startPageX) <= minSlide){
+				mainBox[0].style.webkitTransform = "translatex(-" + currentLeft + "px)";
+			}else{
+				if(!haspause){
+					index = direction == 'right2left' ? index+1: index-1;
+					mainBox[0].style.webkitTransform = "translatex(-"+(selectWidth * index)+"px)";
+				}
+				haspause = false;
+			}
+		})
+	}
+	</script>
+</body>
+</html>
