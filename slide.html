@@ -101,11 +101,10 @@
 			}
 			haspause = false;
 			var slideLeft = currentLeft + (movePageX - startPageX);
-			console.log(slideLeft);
 			mainBox[0].style.webkitTransform = "translatex("+ slideLeft + "px)";
 		});
 		select[i].addEventListener('touchend', function(e){
-			time = new Date();
+			time = new Date() - time;
 			if(time <= 120 || Math.abs(movePageX - startPageX) <= minSlide){
 				mainBox[0].style.webkitTransform = "translatex(-" + currentLeft + "px)";
 			}else{
@@ -113,8 +112,8 @@
 					index = direction == 'right2left' ? index+1: index-1;
 					mainBox[0].style.webkitTransform = "translatex(-"+(selectWidth * index)+"px)";
 				}
-				haspause = false;
 			}
+			haspause = false;
 		})
 	}
 	</script>
